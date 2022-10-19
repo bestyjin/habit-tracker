@@ -1,9 +1,9 @@
 import "./app.css";
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import Habits from "./Components/habits";
 import Nav from "./Components/navbar";
 
-class App extends Component {
+class App extends PureComponent {
   state = {
     habits: [
       { id: 1, name: "Reading", count: 0 },
@@ -13,17 +13,30 @@ class App extends Component {
   };
 
   handleIncrement = (habit) => {
-    const habits = [...this.state.habits];
-    const index = habits.indexOf(habit);
-    habits[index].count++;
+    const habits = this.state.habits.map((item) => {
+      if (item.id === habit.id) {
+        return { ...habit, count: habit.count + 1 };
+      }
+      return item;
+    });
+    // const habits = [...this.state.habits];
+    // const index = habits.indexOf(habit);
+    // habits[index].count++;
     this.setState({ habits });
   };
 
   handleDecrement = (habit) => {
-    const habits = [...this.state.habits];
-    const index = habits.indexOf(habit);
-    const count = habits[index].count - 1;
-    habits[index].count = count < 0 ? 0 : count;
+    const habits = this.state.habits.map((item) => {
+      if (item.id === habit.id) {
+        const count = habit.count - 1;
+        return { ...habit, count: count < 0 ? 0 : count };
+      }
+      return item;
+    });
+    // const habits = [...this.state.habits];
+    // const index = habits.indexOf(habit);
+    // const count = habits[index].count - 1;
+    // habits[index].count = count < 0 ? 0 : count;
     this.setState({ habits });
   };
 
@@ -39,7 +52,9 @@ class App extends Component {
 
   handleReset = () => {
     const habits = this.state.habits.map((habit) => {
-      habit.count = 0;
+      if (habit.count !== 0) {
+        return { ...habit, count: 0 };
+      }
       return habit;
     });
     this.setState({ habits });
